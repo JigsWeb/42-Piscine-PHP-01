@@ -6,16 +6,22 @@ if ($argc > 1) {
     foreach($argv as $i => $v)
         if($i)
             $res = array_merge($res, explode(" ", preg_replace('/ +/', ' ', trim($v))));
-    $e = usort($res, function($a, $b) {
+    usort($res, function($a, $b) {
         $a = strtolower($a);
-        $b = strtolower($a);
+        $b = strtolower($b);
         $order = "abcdefghijklmnopqrstuvwxyz0123456789";
-        $c = stristr($order, $a[0]);
-        $d = stristr($order, $b[0]);
-        var_dump(($a < $b));
-        return ($a > $b) ? 1 : -1;
+        $a_split = str_split($a);
+        foreach ($a_split as $i => $v) {
+            if ($v === $b[$i])
+                continue ;
+            $p = [strpos($order, $v), strpos($order, $b[$i])];
+            if ($p[0] === FALSE && $p[1] === FALSE)
+                return strcmp($a, $b);
+            if (in_array(FALSE, $p))
+                return $p[0] === FALSE ? 1 : -1;
+            return (($p[0] > $p[1]) ? 1 : -1);
+        }
     });
-    printf($e);
     foreach($res as $v)
         echo "$v\n";
 }
